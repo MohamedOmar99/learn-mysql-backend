@@ -27,6 +27,24 @@ app.get("/books", (req, res) => {
   });
 });
 
+// Route to get a single book by ID
+app.get("/books/:id", (req, res) => {
+  const bookId = req.params.id;
+  const q = "SELECT * FROM books WHERE id = ?";
+  db.query(q, [bookId], (err, data) => {
+    if (err) {
+      return res.json(err);
+    } else {
+      // Check if any rows were returned
+      if (data.length === 0) {
+        return res.json({ error: "Book not found" });
+      }
+
+      return res.json(data[0]); // Return the first row (assuming ID is unique)
+    }
+  });
+});
+
 app.post("/books", (req, res) => {
   const q = "INSERT INTO books (`title`, `desc`,`cover`, `price`) VALUES (?)";
   const values = [
