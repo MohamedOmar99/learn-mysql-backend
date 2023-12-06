@@ -28,13 +28,50 @@ app.get("/books", (req, res) => {
 });
 
 app.post("/books", (req, res) => {
-  const q = "INSERT INTO books (`title`, `desc`,`cover`) VALUES (?)";
-  const values = [req.body.title, req.body.desc, req.body.cover];
+  const q = "INSERT INTO books (`title`, `desc`,`cover`, `price`) VALUES (?)";
+  const values = [
+    req.body.title,
+    req.body.desc,
+    req.body.cover,
+    req.body.price,
+  ];
   db.query(q, [values], (err, data) => {
     if (err) {
       return res.json(err);
     } else {
       res.json("book is created");
+    }
+  });
+});
+
+app.delete("/books/:id", (req, res) => {
+  const booksId = req.params.id;
+  const q = "DELETE FROM books WHERE id = ?";
+  db.query(q, [booksId], (err, data) => {
+    console.log(err, data);
+    if (err) {
+      return res.json(err);
+    } else {
+      return res.json(data);
+    }
+  });
+});
+app.put("/books/:id", (req, res) => {
+  const booksId = req.params.id;
+  const q =
+    "UPDATE books SET `title` = ?, `desc` = ?,  `cover` = ?, `price` = ? WHERE id = ?";
+  const values = [
+    req.body.title,
+    req.body.desc,
+    req.body.cover,
+    req.body.price,
+  ];
+  db.query(q, [...values, booksId], (err, data) => {
+    console.log(err, data);
+    if (err) {
+      return res.json(err);
+    } else {
+      return res.json("Book has been updated");
     }
   });
 });
